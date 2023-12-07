@@ -1,30 +1,23 @@
-<script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+<script setup>
+	import "@/assets/css/main.css"
+	import Aside from "@/Views/generic/Aside.vue"
+	import Header from "@/Views/generic/Header.vue"
+	import Footer from '@/views/generic/Footer.vue'
+	import { RouterView, useRouter } from "vue-router"
+
 </script>
 
 <template>
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-  </div>
-  <HelloWorld msg="Vite + Vue" />
+	<Aside />
+    <main class="main-wrap">
+   		<div class="screen-overlay"></div>
+   		<Header />
+  		<RouterView />
+  		<Footer /> 
+	</main>
+
 </template>
 
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
+ 
 </style>
