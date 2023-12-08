@@ -16,8 +16,32 @@
 		queryFn: () => fetchData(),  
 		keepPreviousData: true 
 	})
-	console.log(data)
-    const modalVisible = ref(true)
+	console.log(data) 
+    const addModalVisible = ref(false)
+    const post_Form = ref(null)
+
+    async function postForm( ) {
+        const formData = new FormData(post_Form.value)
+        try {
+            const res = await agent.Categories.post(formData)
+            fetchData()
+            data.value.push(res)
+            addModalVisible.value = false
+            // categories.value.push(res)
+        } catch(err) {
+            console.log(err)
+        }
+
+    }
+    const deleteModal = ref(false)
+    const deleteCategoryId = ref(null)
+
+    async function deleteFunction() {
+        console.log(deleteCategoryId)
+        const res = await agent.Categories.delete(deleteCategoryId.value)
+        fetchData()
+        deleteModal.value = false
+    }
 </script>
 
 <template>
@@ -28,8 +52,8 @@
                 <p>Manage ibommarket categories here.</p>
             </div>
             <div> 
-                <div @click="modalVisible = true" class="btn btn-primary btn-sm rounded">Create new</div>
-            </div>
+                <div @click="addModalVisible = true" class="btn btn-primary btn-sm rounded">Create new</div>
+            </div> 
         </div>
         <div class="card mb-4">
             <header class="card-header">
@@ -57,13 +81,13 @@
 	                        		{{category.Id}}
 	                        	</div>
 	                            <div class="img-wrap"> 
-	                            	<img :src="category.ImageUrl" alt="Product" /> 
+	                            	<img :src="category.ImageUrl" :alt="category.Name" /> 
 	                            </div>
 	                            <div class="info-wrap">
 	                                <div class="title text-truncate"> {{ category.Name }} </div>
 	                                 
 	                                <div class="btn btn-sm font-sm rounded btn-brand"> <i class="material-icons md-edit"></i> Edit </div>
-	                                <div class="btn btn-sm font-sm btn-light rounded"> <i class="material-icons md-delete_forever"></i> Delete </div>
+	                                <div class="btn btn-sm font-sm btn-light rounded" @click="deleteCategoryId = category.Id ; deleteModal = true "> <i class="material-icons md-delete_forever" ></i> Delete </div>
 	                            </div>
 	                        </div>
                         <!-- card-product  end// -->
@@ -93,13 +117,34 @@
 
         <a-modal
           :footer = "null"
-          v-model:open="modalVisible"
-          @afterClose = "modalVisible = false"
+          v-model:open="addModalVisible"
+          @afterClose = "addModalVisible = false"
           title="Add category"
           centered 
           style="padding: 20px 10px;"
-        > 
-                
+        >   
+            <form @submit.prevent="postForm" ref="post_Form">
+                <div class="input-upload">
+                        <img src="@/assets/imgs/theme/upload.svg" alt="" />
+                        <input accept="image/*" class="form-control" type="file" name="file" />
+                    </div>
+                <div class="mb-4">
+                    <label for="name" class="form-label">Catrgory name</label>
+                    <input type="text" name="name" placeholder="Catrgory name" class="form-control" >
+                </div>
+                <button class="btn btn-md rounded font-sm hover-up">Publish</button>
+            </form>
+        </a-modal>
+        <a-modal
+          
+          v-model:open="deleteModal"
+          @afterClose = "deleteModal = false"
+          title="Delete category"
+          centered 
+          @ok="deleteFunction"
+          style="padding: 20px 10px;"
+        >   
+            <span>Are you sure you want to delete this category?</span>
         </a-modal>
     </section>
 </template>
