@@ -14,14 +14,15 @@
 	        colorPrimary: '#3BB77E',
 	      },
 	    }"
-	  > 
-		<Aside />
-	    <main class="main-wrap">
-	   		<div class="screen-overlay"></div>
-	   		<Header />
-	  		<RouterView />
-	  		<Footer /> 
-		</main>
+	  >  
+			<Aside v-if="$route.path !== '/login' &&  $route.path !== '/register' " /> 
+		    <main :class = "{ 'main-wrap' : $route.path !== '/login' &&  $route.path !== '/register' }">
+		   		<div class="screen-overlay"></div>
+		   		<Header v-if="$route.path !== '/login' &&  $route.path !== '/register' " />
+		  		<RouterView /> 
+		  		<Footer v-if="$route.path !== '/login' &&  $route.path !== '/register' " /> 
+			</main>
+	 
 
 	</a-config-provider>
 </template>

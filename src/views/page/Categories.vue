@@ -5,11 +5,9 @@
 
 	const fetchData = async () => {       
             const res = await  agent.Categories.get()
-        	
         	console.log(res)
         	return res
 	}
- 
  
 	const { isLoading, data, error, isError } = useQuery({
 		queryKey: ["Categories"],
@@ -78,7 +76,7 @@
                     	<div v-for="category in data" :key="category.Id" class="col">
 	                        <div class="card card-product-grid">
 	                        	<div class="id">
-	                        		{{category.Id}}
+	                        		id : {{category.Id}}
 	                        	</div>
 	                            <div class="img-wrap"> 
 	                            	<img :src="category.ImageUrl" :alt="category.Name" /> 
@@ -93,7 +91,6 @@
                         <!-- card-product  end// -->
                     	</div> 
                 	</template>
-
                 </div>
                 <!-- row.// -->
             </div>
@@ -131,12 +128,11 @@
                 <div class="mb-4">
                     <label for="name" class="form-label">Catrgory name</label>
                     <input type="text" name="name" placeholder="Catrgory name" class="form-control" >
-                </div>
-                <button class="btn btn-md rounded font-sm hover-up">Publish</button>
+                </div> 
+                <a-button class="btn btn-md rounded font-sm hover-up"  size="large" > Publish </a-button>
             </form>
         </a-modal>
         <a-modal
-          
           v-model:open="deleteModal"
           @afterClose = "deleteModal = false"
           title="Delete category"

@@ -23,14 +23,18 @@
                             <span class="text">Dashboard</span>
                         </RouterLink>
                     </li> 
-                    <li @click.prevent=" dropdownStates.categories = !dropdownStates.categories " class="menu-item has-submenu" :class=" { active: dropdownStates.categories} "> 
-                        <a class="menu-link" href="#">
+                    <li @click.prevent=" dropdownStates.categories = !dropdownStates.categories "
+                         class="menu-item has-submenu" 
+                         :class=" { active: dropdownStates.categories || $route.path == '/subcategories' || $route.path == '/categories' }  "
+                        >  
+                        
+                        <div class="menu-link" href="#">
                             <i class="icon material-icons md-person"></i>
                             <span class="text">Categories</span>
-                        </a>
+                        </div>
                         <div class="submenu">
-                            <RouterLink to="/categories">Main Categories</RouterLink>
-                            <RouterLink to="/subcategories">Sub Categories</RouterLink> 
+                            <RouterLink :class=" { active: $route.path == '/categories' }  " to="/categories">Main Categories</RouterLink>
+                            <RouterLink :class=" { active: $route.path == '/subcategories' }  " to="/subcategories">Sub Categories</RouterLink> 
                         </div>
                     </li>
                     <li class="menu-item">

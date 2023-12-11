@@ -4303,3 +4303,10 @@ body.dark .dropdown-menu .dropdown-item.text-danger {
   }
 }
 /*# sourceMappingURL=main.css.map */
+
+input.error {
+  border-color: #ff000060 !important
+}
+span.error {
+  color: #ff000078;
+}
