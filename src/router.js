@@ -4,6 +4,8 @@ import Categories from "./views/page/Categories.vue"
 import SubCategories from "./views/page/SubCategories.vue"
 import Login from "./views/page/Login.vue"
 import Register from "./views/page/Register.vue"
+import Adverts from "./views/page/Adverts.vue"
+import Posts from "./views/page/Posts.vue"
 import ErrorComponent from "./views/page/ErrorComponent.vue"
 
 // ADMIN
@@ -33,10 +35,20 @@ const router = createRouter({
 			name: "Login",
 			component: Login
 		} ,
-			{
+		{
 			path: "/register",
 			name: "Register",
 			component: Register
+		} ,
+		{
+			path: "/adverts",
+			name: "Adverts",
+			component: Adverts
+		} ,
+		{
+			path: "/posts",
+			name: "Posts",
+			component: Posts
 		} ,
 		{
 			path: "/:catchall(.*)*",

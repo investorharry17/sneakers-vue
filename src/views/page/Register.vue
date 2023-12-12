@@ -2,6 +2,7 @@
 	import { ref, reactive } from "vue"
 	import useVuelidate from "@vuelidate/core"
 	import { required,   email, helpers } from "@vuelidate/validators"
+	import agent from "@/app/agent.js"
 
 	const passwordRules = helpers.regex(/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,16}$/)
 	const PhoneNumberRule = helpers.regex(/^(?:\+?234|0)[789]\d{9}$/)
@@ -28,7 +29,9 @@
 
 		if (!result) {
 			return
-		} 
+		} else {
+
+		}
 
 	}
 </script>

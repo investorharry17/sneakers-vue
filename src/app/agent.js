@@ -22,7 +22,11 @@ const requests = {
 };
 
 
- 
+const Account = {
+    login : (body) => requests.post('account/login', body),
+    currentUser: () => requests.get('account/currentUser'),
+    register : (body) => requests.post('account/register', body)
+}
 const Advert = {
     get : () => requests.get("adverts"),
     post : body => requests.postForm("adverts", body),
@@ -53,6 +57,7 @@ const UrgentRequests = {
     getRandom: () => requests.get("urgentRequests/randomurgentrequests") 
 }
 const agent = {
+    Account,
     Advert, 
     Categories,
     SubCategories,

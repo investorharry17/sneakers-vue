@@ -4304,7 +4304,7 @@ body.dark .dropdown-menu .dropdown-item.text-danger {
 }
 /*# sourceMappingURL=main.css.map */
 
-input.error {
+input.error , select.error {
   border-color: #ff000060 !important
 }
 span.error {

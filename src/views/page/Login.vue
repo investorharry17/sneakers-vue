@@ -2,6 +2,9 @@
 	import { ref, reactive } from "vue"
 	import useVuelidate from "@vuelidate/core"
 	import { required,   email, helpers } from "@vuelidate/validators"
+	import agent from "@/app/agent.js"
+ 	import { message as antMessage } from 'ant-design-vue';
+
 
 	const passwordRules = helpers.regex(/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,16}$/)
 
@@ -15,13 +18,27 @@
 	}
 				}
 	const v$ = useVuelidate(rules, data)
+	const makingRequest = ref(false)
 
 	async function submitForm () {
 		const result = await v$.value.$validate()
 
 		if (!result) {
 			return
-		} 
+		}  else {
+			makingRequest.value = true
+			try {
+
+				const res = await agent.Account.login(data)
+				makingRequest.value = false
+				antMessage.success('Login successful!');
+			} catch (err) {
+				makingRequest.value = false
+				// if () {}
+				console.log(err)
+				antMessage.error( err.response.data );
+			}
+		}
 
 	}
 </script>
@@ -29,9 +46,9 @@
         <main>
             <header class="main-header style-2 navbar">
                 <div class="col-brand">
-                    <a href="index.html" class="brand-wrap">
+                    <RouterLink  to="/" class="brand-wrap">
                         <img src="@/assets/imgs/theme/logo.svg" class="logo" alt="Nest Dashboard" />
-                    </a>
+                    </RouterLink >
                 </div>
                 <div class="col-nav">
                     <ul class="nav">
@@ -54,7 +71,7 @@
                         <h4 class="card-title mb-4">Sign in</h4>
                         <form @submit.prevent="submitForm">
                             <div class="mb-3">
-                                <input v-model="data.Username" :class = "{ error : v$.Username.$errors[0] }" class="form-control" placeholder="Username or email" type="text" />
+                                <input v-model="data.Username" :class = "{ error : v$.Username.$errors[0] }" class="form-control" placeholder="Username" type="text" />
                                 <span  v-for="error in v$.Username.$errors" :key="error" class="error"> {{ error.$message }}  </span>
                             </div>
                             <!-- form-group// -->
@@ -72,7 +89,7 @@
                             </div>
                             <!-- form-group form-check .// -->
                             <div class="mb-4">
-                                <a-button @click="submitForm" size="large" type="submit" class="btn btn-primary w-100">Login</a-button>
+                                <a-button :loading = "makingRequest" @click="submitForm" size="large" type="submit" class="btn btn-primary w-100">Login</a-button>
                             </div>
                             <!-- form-group// -->
                         </form>

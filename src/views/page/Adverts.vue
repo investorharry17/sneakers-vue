@@ -6,7 +6,7 @@
     import { message as antMessage } from 'ant-design-vue';
     import { ref, reactive } from "vue"
     import useVuelidate from "@vuelidate/core"
-    import { required,   email, helpers } from "@vuelidate/validators"
+    import { required, helpers } from "@vuelidate/validators"
 
  
     const AdminStore = Store()
@@ -16,11 +16,13 @@
 
     const formData = reactive({
         file: "",
-        name: ""
+        status: 2,
+        advertViewPort : 3
     })
     const rules = {
         file: { required: helpers.withMessage('Please select an image', required) },
-        name: { required: helpers.withMessage('Category name field cannot be empty', required ) }
+        status: { required: helpers.withMessage('Select advert status', required ) },
+        advertViewPort: { required: helpers.withMessage('Select advert Viewport', required ) },
     }
 
     const v$ = useVuelidate(rules, formData)
@@ -33,13 +35,13 @@
         }, 100);
     }
 	const fetchData = async () => {       
-            const res = await  agent.Categories.get()
+            const res = await  agent.Advert.get()
         	console.log(res)
         	return res
 	}
  
 	const { isLoading, data, error, isError } = useQuery({
-		queryKey: ["Categories"],
+		queryKey: ["Adverts"],
 		queryFn: () => fetchData(),  
 		keepPreviousData: true 
 	}) 
@@ -56,7 +58,7 @@
 
             const formData = new FormData(post_Form.value)
             try {
-                const res = await agent.Categories.post(formData)
+                const res = await agent.Advert.post(formData)
                 fetchData()
                 data.value.push(res)
                 addModalVisible.value = false
@@ -73,11 +75,11 @@
     } 
 
     const deleteModal = ref(false)
-    const deleteCategoryId = ref(null)
+    const deleteAdvertId = ref(null)
 
     async function deleteFunction() {
-        console.log(deleteCategoryId)
-        const res = await agent.Categories.delete(deleteCategoryId.value)
+        console.log(deleteAdvertId)
+        const res = await agent.Advert.delete(deleteAdvertId.value)
         fetchData()
         deleteModal.value = false
     }
@@ -111,22 +113,23 @@
             </header>
             <!-- card-header end// -->
             <div class="card-body">
-                <div class="row gx-3 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 row-cols-xxl-5"> 
+                <div class="row gx-3 row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-xl-2 row-cols-xxl-3"> 
                 	<template v-if="!isError && !isLoading ">
                 		
-                    	<div v-for="category in data" :key="category.Id" class="col">
+                    	<div v-for="advert in data" :key="advert.Id" class="col">
 	                        <div class="card card-product-grid">
 	                        	<div class="id">
-	                        		id : {{category.Id}}
+	                        		id : {{advert.Id}}
 	                        	</div>
 	                            <div class="img-wrap"> 
-	                            	<img :src="category.ImageUrl" :alt="category.Name" /> 
+	                            	<img :src="advert.Url" :alt="advert.Id" /> 
 	                            </div>
 	                            <div class="info-wrap">
-	                                <div class="title text-truncate"> {{ category.Name }} </div>
+	                                <div class="title text-truncate"> Viewport :  {{ advert.AdvertVeiewPort }} </div>
+	                                <div class="title text-truncate"> Status : {{ advert.Status }} </div>
 	                                 
 	                                <div class="btn btn-sm font-sm rounded btn-brand"> <i class="material-icons md-edit"></i> Edit </div>
-	                                <div class="btn btn-sm font-sm btn-light rounded" @click="deleteCategoryId = category.Id ; deleteModal = true "> <i class="material-icons md-delete_forever" ></i> Delete </div>
+	                                <div class="btn btn-sm font-sm btn-light rounded" @click="deleteAdvertId = advert.Id ; deleteModal = true "> <i class="material-icons md-delete_forever" ></i> Delete </div>
 	                            </div>
 	                        </div>
                         <!-- card-product  end// -->
@@ -157,20 +160,29 @@
           :footer = "null"
           v-model:open="addModalVisible"
           @afterClose = "addModalVisible = false"
-          title="Add category"
+          title="Add advert"
           centered 
           style="padding: 20px 10px;"
         >   
             <form @submit.prevent="postForm" ref="post_Form">
                 <div class="input-upload">
                         <img src="@/assets/imgs/theme/upload.svg" alt="" />
-                        <input :class = "{ error : v$.file.$errors[0] }" @change=" (event) => { formData.file = event.target.files[0] } " accept="image/*" class="form-control" type="file" name="file" />
+                        <input :class = "{ error : v$.file.$errors[0] }" @change=" (event) => { formData.file = event.target.files[0] } " accept="image/*" class="form-control" type="file" name="files" />
                         <span  v-for="error in v$.file.$errors" :key="error" class="error"> {{ error.$message }}  </span>
                     </div>
                 <div class="mb-4">
-                    <label for="name" class="form-label">Catrgory name</label>
-                    <input :class = "{ error : v$.name.$errors[0] }" v-model="formData.name" type="text" name="name" placeholder="Catrgory name" class="form-control" >
-                    <span  v-for="error in v$.name.$errors" :key="error" class="error"> {{ error.$message }}  </span>
+                    <label for="name" class="form-label">Status</label>
+                    <select :class = "{ error : v$.status.$errors[0] }" name="status" v-model="formData.status" class="form-select">
+                    	<option value="2"> Active  </option>
+                    </select>
+                    <span  v-for="error in v$.status.$errors" :key="error" class="error"> {{ error.$message }}  </span>
+                </div> 
+                <div class="mb-4">
+                    <label for="name" class="form-label">View port</label>
+                    <select :class = "{ error : v$.advertViewPort.$errors[0] }" v-model="formData.advertViewPort" name="advertViewPort" class="form-select">
+                    	<option value="3"> Both  </option>
+                    </select>
+                    <span  v-for="error in v$.advertViewPort.$errors" :key="error" class="error"> {{ error.$message }}  </span>
                 </div> 
                 <a-button type="submit" class="btn btn-md rounded font-sm hover-up" :loading = "makingRequest"  size="large" @click="postForm"> Publish </a-button>
             </form>

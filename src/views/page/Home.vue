@@ -1,4 +1,13 @@
 <script setup>
+
+    if (!localStorage.ibmToken) {
+        // antMessage.info("Please login to continue")
+        setTimeout(function() {
+            // router.push("/login")
+            
+
+        }, 100);
+    }
 	 
 </script>
 <template> 

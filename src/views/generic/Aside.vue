@@ -37,17 +37,17 @@
                             <RouterLink :class=" { active: $route.path == '/subcategories' }  " to="/subcategories">Sub Categories</RouterLink> 
                         </div>
                     </li>
-                    <li class="menu-item">
-                        <a class="menu-link" href="page-reviews.html">
+                    <li class="menu-item" :class=" { active: dropdownStates.categories || $route.path == '/adverts'  }  ">
+                        <RouterLink class="menu-link" to="/adverts">
                             <i class="icon material-icons md-comment"></i>
                             <span class="text">Advert Banners</span>
-                        </a>
+                        </RouterLink>
                     </li> 
                     <li class="menu-item">
-                        <a class="menu-link" disabled href="#">
+                        <RouterLink class="menu-link" to="/posts">
                             <i class="icon material-icons md-pie_chart"></i>
                             <span class="text">Posts</span>
-                        </a>
+                        </RouterLink>
                     </li>
                 </ul>
                 <hr />

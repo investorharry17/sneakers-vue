@@ -1,37 +1,87 @@
 <script setup>
-    import { ref } from "vue"
-	import { useQuery } from "@tanstack/vue-query"
-	import agent from '@/app/agent.js'
+    import { useQuery } from "@tanstack/vue-query" 
+    import agent from '@/app/agent.js'
+    import { useRouter } from "vue-router"
+    import { Store } from "@/store/AdminStore.js"
+    import { message as antMessage } from 'ant-design-vue';
+    import { ref, reactive } from "vue"
+    import useVuelidate from "@vuelidate/core"
+    import { required,   email, helpers } from "@vuelidate/validators"
 
-	const fetchData = async () => {       
+ 
+    const AdminStore = Store()
+    const router = useRouter()
+
+ 
+
+    const formData = reactive({
+        file: "",
+        name: "",
+        categoryId: ""
+    })
+    const rules = {
+        file: { required: helpers.withMessage('Please select an image', required) },
+        name: { required: helpers.withMessage('Category name field cannot be empty', required ) },
+        categoryId: { required: helpers.withMessage('Category Id field cannot be empty', required ) }
+    }
+
+    const v$ = useVuelidate(rules, formData)
+    const makingRequest = ref(false)
+ 
+    if (!localStorage.ibmToken) {
+        // antMessage.info("Please login to continue")
+        setTimeout(function() {
+            // router.push("/login")
+        }, 100);
+    }
+    const fetchData = async () => {       
             const res = await  agent.SubCategories.get()
-        	
-        	console.log(res)
-        	return res
-	}
+            console.log(res)
+            return res
+    }
  
- 
-	const { isLoading, data, error, isError } = useQuery({
-		queryKey: ["Categories"],
-		queryFn: () => fetchData(),  
-		keepPreviousData: true 
-	})
-	console.log(data)
-    const deleteModal = ref(false) 
-    const post_Form = ref(null)
+    const { isLoading, data, error, isError } = useQuery({
+        queryKey: ["SubCategories"],
+        queryFn: () => fetchData(),  
+        keepPreviousData: true 
+    }) 
     const addModalVisible = ref(false)
+    const post_Form = ref(null)
+
     async function postForm( ) {
-        const formData = new FormData(post_Form.value)
-        try {
-            const res = await agent.SubCategories.post(formData)
-            fetchData()
-            data.value.push(res) 
-            addModalVisible.value = false
-            // categories.value.push(res)
-        } catch(err) {
-            console.log(err)
+        const result = await v$.value.$validate()
+        if (!result) {
+            return 
+        } else {
+  
+            makingRequest.value = true
+
+            const formData = new FormData(post_Form.value)
+            try {
+                const res = await agent.SubCategories.post(formData)
+                fetchData()
+                data.value.push(res)
+                addModalVisible.value = false
+                antMessage.success("subcategory added")
+                // categories.value.push(res)
+            } catch(err) {
+                console.log(err)
+                makingRequest.value = false
+                antMessage.error("Request failed")
+
+            }
         }
 
+    } 
+
+    const deleteModal = ref(false)
+    const deleteCategoryId = ref(null)
+
+    async function deleteFunction() {
+        console.log(deleteCategoryId)
+        const res = await agent.SubCategories.delete(deleteCategoryId.value)
+        fetchData()
+        deleteModal.value = false
     }
 
 </script>
@@ -128,18 +178,23 @@
         >   
             <form @submit.prevent="postForm" ref="post_Form">
                 <div class="input-upload">
-                        <img src="@/assets/imgs/theme/upload.svg" alt="" />
-                        <input accept="image/*" class="form-control" type="file" name="file" />
+                        <img src="@/assets/imgs/theme/upload.svg" alt="" /> 
+                        <input :class = "{ error : v$.file.$errors[0] }" @change=" (event) => { formData.file = event.target.files[0] } " accept="image/*" class="form-control" type="file" name="file" />
+                        <span  v-for="error in v$.file.$errors" :key="error" class="error"> {{ error.$message }}  </span>
+
+
                     </div>
                 <div class="mb-4">
                     <label for="name" class="form-label">Catrgory name</label>
-                    <input type="text" name="name" placeholder="Catrgory name" class="form-control" >
+                    <input v-model = "formData.name" :class = "{ error : v$.name.$errors[0] }" type="text" name="name" placeholder="Catrgory name" class="form-control" >
+                    <span  v-for="error in v$.name.$errors" :key="error" class="error"> {{ error.$message }}  </span>
                 </div>
                 <div class="mb-4">
                     <label for="categoryId" class="form-label">Catrgory Id</label>
-                    <input type="text" name="categoryId" placeholder="Catrgory Id" class="form-control" >
+                    <input v-model="formData.categoryId" :class = "{ error : v$.categoryId.$errors[0] }" type="text" name="categoryId" placeholder="Catrgory Id" class="form-control" >
+                    <span  v-for="error in v$.categoryId.$errors" :key="error" class="error"> {{ error.$message }}  </span>
                 </div>
-                <button class="btn btn-md rounded font-sm hover-up">Publish</button>
+                <a-button @click="postForm" :loading="makingRequest" class="btn btn-md rounded font-sm hover-up">Publish</a-button>
             </form>
         </a-modal>
         <a-modal
