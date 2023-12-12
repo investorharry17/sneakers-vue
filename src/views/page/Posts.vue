@@ -176,13 +176,18 @@
         </div>
     </section>
 
-    <a-modal v-model:open="detailModalOpened" width="1000px" wrap-class-name="full-modal" title="Post details"> 
+    <a-modal :footer="null" v-model:open="detailModalOpened" width="1000px" wrap-class-name="full-modal" title="Post details"> 
         <section class="content-main">
            
             <div class="content-header">
                 <div>
                     <h2 class="content-title card-title"> {{ data[detailsIndex].Title }} </h2>
                     <p>token : {{ data[detailsIndex].Token }}</p>  
+                    <h5 class="content-title card-title"> Category : {{ data[detailsIndex].CategoryId }} </h5>
+                    <h5 class="content-title card-title"> sub Catrgory : {{ data[detailsIndex].SubcategoryId }} </h5> 
+                    <h5 class="content-title card-title"> Price : ₦ {{ formartPrice(data[detailsIndex].Price)  }} </h5> 
+
+
                 </div>
             </div>
             <div class="row">
@@ -207,6 +212,10 @@
                     <!-- row.// -->
                 </div>
             </div>
+            <h5 class="content-title card-title"> Location : {{ data[detailsIndex].Location }} </h5> 
+            <h5 class="content-title card-title"> Address : {{ data[detailsIndex].PropertyAddress }} </h5> 
+            <h5 class="content-title card-title"> Description : {{ data[detailsIndex].Description }} </h5> 
+
         </section>
     </a-modal>
 
