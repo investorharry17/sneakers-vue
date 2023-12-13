@@ -8,7 +8,12 @@
     import useVuelidate from "@vuelidate/core"
     import { required, helpers } from "@vuelidate/validators"
 
- 
+    if (!localStorage.ibmToken) {
+        // antMessage.info("Please login to continue")
+        setTimeout(function() {
+            router.push("/login")
+        }, 100);
+    } 
     const AdminStore = Store()
     const router = useRouter()
 
@@ -28,12 +33,7 @@
     const v$ = useVuelidate(rules, formData)
     const makingRequest = ref(false)
  
-    if (!localStorage.ibmToken) {
-        // antMessage.info("Please login to continue")
-        setTimeout(function() {
-            // router.push("/login")
-        }, 100);
-    }
+
 	const fetchData = async () => {       
             const res = await  agent.Advert.get()
         	console.log(res)
