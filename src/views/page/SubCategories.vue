@@ -12,7 +12,6 @@
     const AdminStore = Store()
     const router = useRouter()
 
- 
 
     const formData = reactive({
         file: "",
@@ -25,7 +24,7 @@
         categoryId: { required: helpers.withMessage('Category Id field cannot be empty', required ) }
     }
 
-    const v$ = useVuelidate(rules, formData)
+    let v$ = useVuelidate(rules, formData)
     const makingRequest = ref(false)
  
     if (!localStorage.ibmToken) {
@@ -64,6 +63,11 @@
                 addModalVisible.value = false
                 antMessage.success("subcategory added")
                 // categories.value.push(res)
+                formData.name = ""
+                formData.categoryId = ""
+                post_Form.value.reset()
+                v$ = useVuelidate(rules, formData)
+                makingRequest.value = false
             } catch(err) {
                 console.log(err)
                 makingRequest.value = false
@@ -79,9 +83,16 @@
 
     async function deleteFunction() {
         console.log(deleteCategoryId)
-        const res = await agent.SubCategories.delete(deleteCategoryId.value)
-        fetchData()
-        deleteModal.value = false
+        try {
+            const res = await agent.SubCategories.delete(deleteCategoryId.value)
+            fetchData()
+            deleteModal.value = false
+            antMessage.success("subcategory deleted")
+
+        } catch(error) {
+            antMessage.error("subcategory added")
+
+        }
     }
 
 </script>

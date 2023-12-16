@@ -23,7 +23,7 @@
         name: { required: helpers.withMessage('Category name field cannot be empty', required ) }
     }
 
-    const v$ = useVuelidate(rules, formData)
+    let v$ = useVuelidate(rules, formData)
     const makingRequest = ref(false)
  
     if (!localStorage.ibmToken) {
@@ -54,13 +54,18 @@
   
             makingRequest.value = true
 
-            const formData = new FormData(post_Form.value)
+            const formDataS = new FormData(post_Form.value)
             try {
-                const res = await agent.Categories.post(formData)
+                const res = await agent.Categories.post(formDataS)
                 fetchData()
                 data.value.push(res)
                 addModalVisible.value = false
                 antMessage.success("category added")
+                formData.name = ""
+                post_Form.value.reset()
+                v$ = useVuelidate(rules, formData)
+                makingRequest.value = false
+
                 // categories.value.push(res)
             } catch(err) {
                 console.log(err)
@@ -80,6 +85,8 @@
         const res = await agent.Categories.delete(deleteCategoryId.value)
         fetchData()
         deleteModal.value = false
+        antMessage.success("category deleted")
+
     }
 </script>
 
