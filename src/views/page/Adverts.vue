@@ -8,12 +8,12 @@
     import useVuelidate from "@vuelidate/core"
     import { required, helpers } from "@vuelidate/validators"
 
-    if (!localStorage.ibmToken) {
-        // antMessage.info("Please login to continue")
-        setTimeout(function() {
-            router.push("/login")
-        }, 100);
-    } 
+    // if (!localStorage.ibmToken) {
+    //     // antMessage.info("Please login to continue")
+    //     setTimeout(function() {
+    //         router.push("/login")
+    //     }, 100);
+    // } 
     const AdminStore = Store()
     const router = useRouter()
 
