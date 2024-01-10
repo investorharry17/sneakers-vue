@@ -63,7 +63,7 @@
                             <article class="icontext">
                                 <span class="icon icon-sm rounded-circle bg-info-light"><i class="text-info material-icons md-shopping_basket"></i></span>
                                 <div class="text">
-                                    <h6 class="mb-1 card-title"> Posts </h6>
+                                    <h6 class="mb-1 card-title"> <RouterLink class="main" to="/posts" > Posts </RouterLink> </h6>
                                     <span>982</span>
                                     <span class="text-sm"> Click here to manage posts on Ibommarket. </span>
                                 </div>
