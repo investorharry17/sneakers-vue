@@ -2,6 +2,8 @@
     import { ref } from "vue";
     import agent  from "@/app/agent.js";
 	import { useQuery } from "@tanstack/vue-query" 
+    import { message as antMessage } from 'ant-design-vue';
+
 
     const fetchData = async () => {   
         try {
@@ -54,6 +56,34 @@
         } else {
             openedDetailsMenuIndex.value = null
         }
+    }
+    const rejectModalVisible = ref(false)
+    const rejectReasons = ref([])
+    const rejectReasonsInput = ref("") 
+    const addRejectReason = function ()  {
+        if (rejectReasonsInput.value) {
+            rejectReasons.value.push(rejectReasonsInput.value)
+            rejectReasonsInput.value = ""
+        }
+    }
+    const removeRejectReason = function (index) {
+        console.log(index)
+        const newRejects = []
+        rejectReasons.value.forEach((value, place) => {
+            console.log(value)
+            if (place != index ) {
+                return newRejects.push(value)
+            }
+        })
+        rejectReasons.value = newRejects
+    }
+    const sendRejectRequest = function() {
+        rejectModalVisible.value =  false 
+        antMessage.success("Post rejected")
+    }
+    const openRejectModal = function () {
+        rejectModalVisible.value =  true 
+
     }
 </script>
 
@@ -126,10 +156,10 @@
                                             <div class="dropdown">
                                                 <div @click="handleMenuClicked(index)" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </div>
                                                 <div  :class="{ show : openedDetailsMenuIndex == index }" class="dropdown-menu">
-                                                    <div class="dropdown-item" @click="openDetailsModal(true,index )">View detail</div>
-                                                    <div class="dropdown-item" >Accept</div>
-                                                    <div class="dropdown-item text-warn" >Reject</div>
-                                                    <div class="dropdown-item text-danger" >Delete</div>
+                                                    <div style="cursor: pointer;" class="dropdown-item" @click="openDetailsModal(true,index )">View detail</div>
+                                                    <div style="cursor: pointer;" class="dropdown-item" >Accept</div>
+                                                    <div style="cursor: pointer;" @click="openRejectModal" class="dropdown-item text-warn" >Reject</div>
+                                                    <div style="cursor: pointer;" class="dropdown-item text-danger" >Delete</div>
                                                 </div>
                                             </div>
                                             <!-- dropdown //end -->
@@ -227,6 +257,40 @@
 
         </section>
     </a-modal>
+
+    <a-modal
+          :footer = "null"
+          v-model:open="rejectModalVisible"
+          @afterClose = "rejectModalVisible = false"
+          title="Add Reject Reason"
+          centered  
+          style="padding: 20px 10px;"
+        >   
+            <div> 
+                <form @submit.prevent="addRejectReason">
+                    
+                    <div style="display: flex;" class="">
+                            <input type="text" v-model="rejectReasonsInput" placeholder="Add reason..." class="form-control" />
+                            <svg @click="addRejectReason" style="margin-left: 10px; color: gray; cursor: pointer;" height="40" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                                <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25V15a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V9Z" clip-rule="evenodd" />
+                            </svg>
+
+                    </div>
+                </form>
+                <div style="margin-top: 15px" class="col-name">
+                    <div  v-for="(reason, index) in rejectReasons"  style="display: flex; width: 100% ; justify-content: space-between; margin-bottom: 15px">
+                        <h6 class="mb-0" style="margin-bottom: 15px" > {{ reason }} </h6> 
+                            <svg @click="removeRejectReason(index)" height="20" xmlns="http://www.w3.org/2000/svg" style="color: red ; cursor: pointer;" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                                <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-1.72 6.97a.75.75 0 1 0-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06L12 13.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L13.06 12l1.72-1.72a.75.75 0 1 0-1.06-1.06L12 10.94l-1.72-1.72Z" clip-rule="evenodd" />
+                            </svg>
+
+                    </div>
+                </div>
+                 <div style="margin-top: 15px" class="col-name">
+                   <a-button @click="sendRejectRequest" type="primary" :loading="false">Reject Post</a-button>
+                </div>
+            </div>
+        </a-modal>
 
     </template>
     <style lang="less">
