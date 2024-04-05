@@ -1,10 +1,7 @@
 <script setup>
 	import { ref, reactive } from "vue"
 	import useVuelidate from "@vuelidate/core"
-	import { required,   email, helpers } from "@vuelidate/validators"
-	import agent from "@/app/agent.js"
- 	import { message as antMessage } from 'ant-design-vue';
-
+	import { required,   email, helpers } from "@vuelidate/validators" 
 
 	const passwordRules = helpers.regex(/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,16}$/)
 
@@ -14,30 +11,21 @@
 	})
 	const rules = {
 		Username: { required: helpers.withMessage('Username field cannot be empty', required) },
-		Password: { required: helpers.withMessage('Password field cannot be empty', required ) , passwordRules : helpers.withMessage('Password must have at least 8 characters , one upper-case, lowercase, one number and a special character', passwordRules) 
-	}
-				}
+		Password: { required: helpers.withMessage('Password field cannot be empty', required ) ,
+                    passwordRules : helpers.withMessage('Password must have at ... pssword rules', passwordRules) 
+                }
+        }
 	const v$ = useVuelidate(rules, data)
-	const makingRequest = ref(false)
-
 	async function submitForm () {
 		const result = await v$.value.$validate()
 
 		if (!result) {
 			return
 		}  else {
-			makingRequest.value = true
-			try { 
-				const res = await agent.Account.login(data)
-				makingRequest.value = false
-				antMessage.success('Login successful!');
-			} catch (err) {
-				makingRequest.value = false
-				console.log(err)
-				antMessage.error( err.response.data );
-			}
+			// function to call after form validation
 		} 
 	}
+    // submitFunction()
 </script>
 <template>
         <main>
@@ -66,27 +54,44 @@
                 <div class="card mx-auto card-login">
                     <div class="card-body">
                         <h4 class="card-title mb-4">Sign in</h4>
-                        <form @submit.prevent="submitForm">
+
+                    <form @submit.prevent="submitForm">
                             <div class="mb-3">
-                                <input v-model="data.Username" :class = "{ error : v$.Username.$errors[0] }" class="form-control" placeholder="Username" type="text" />
-                                <span  v-for="error in v$.Username.$errors" :key="error" class="error"> {{ error.$message }}  </span>
+                                <input 
+                                    v-model="data.Username"
+                                    :class = "{ error : v$.Username.$errors[0] }" 
+                                    class="form-control" placeholder="Username" 
+                                    type="text" 
+                                />
+                                <span  
+                                    v-for="error in v$.Username.$errors" 
+                                    :key="error" 
+                                    class="error">
+                                     {{ error.$message }}  
+                                </span>
                             </div>
                             <!-- form-group// -->
                             <div class="mb-3">
-                                <input v-model="data.Password" :class = "{ error : v$.Password.$errors[0] }" class="form-control" placeholder="Password" type="password" />
-                                <span  v-for="error in v$.Password.$errors" :key="error" class="error"> {{ error.$message }}  </span>
-                            </div>
-                            <!-- form-group// -->
-                            <div class="mb-3">
-                                <a href="#" class="float-end font-sm text-muted">Forgot password?</a>
-                                <label class="form-check">
-                                    <input  type="checkbox" class="form-check-input" checked="" />
-                                    <span class="form-check-label">Remember</span>
-                                </label>
-                            </div>
+                                <input 
+                                    v-model="data.Password" 
+                                    :class = "{ error : v$.Password.$errors[0] }" 
+                                    class="form-control" 
+                                    placeholder="Password" 
+                                    type="password" />
+                                <span  
+                                    v-for="error in v$.Password.$errors" 
+                                    :key="error" 
+                                    class="error"> 
+                                    {{ error.$message }} 
+                                 </span>
+                            </div> 
                             <!-- form-group form-check .// -->
                             <div class="mb-4">
-                                <a-button :loading = "makingRequest" @click="submitForm" size="large" type="submit" class="btn btn-primary w-100">Login</a-button>
+                                <button 
+                                    @click="submitForm" 
+                                    class="btn btn-primary w-100">
+                                        Login
+                                </button>
                             </div>
                             <!-- form-group// -->
                         </form>
@@ -114,15 +119,7 @@
                     </div>
                 </div>
             </section>
-<!--             <footer class="main-footer text-center">
-                <p class="font-xs">
-                     
-                         {{ new Date().getFullYear() }}
-                    
-                    &copy; Ibommarket.
-                </p>
-                <p class="font-xs mb-30">All rights reserved</p>
-            </footer> -->
+
         </main>
 </template>
 
